@@ -1,0 +1,11 @@
+version: 2 
+
+sources:
+    - name: ecommerce_raw
+      database: ecommerce-analytics-506021
+      schema: ecommerce_raw
+
+      tables:
+        - name: orders 
+        - name: order_items 
+        - name: sellers
