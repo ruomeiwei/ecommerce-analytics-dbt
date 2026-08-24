@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_order_items
+    description: "Cleaned and standardised order item data. One row per item within an order."
+
+    columns:
+      - name: order_id
+        description: "Unique identifier for the order."
+
+      - name: order_item_id
+        description: "Sequential identifier of the item within an order."
+
+      - name: product_id
+        description: "Unique identifier for the product."
+
+      - name: seller_id
+        description: "Unique identifier for the seller."
+
+      - name: shipping_limit_at
+        description: "Latest timestamp by which the seller is expected to hand the order item to the carrier."
+
+      - name: price
+        description: "Price of the individual order item."
+
+      - name: freight_value
+        description: "Freight cost associated with the individual order item."

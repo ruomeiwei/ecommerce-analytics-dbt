@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_sellers
+    description: "Cleaned and standardised seller-level data. One row per seller."
+
+    columns:
+      - name: seller_id
+        description: "Unique identifier for the seller."
+        data_tests:
+          - not_null
+          - unique
+
+      - name: seller_zip_code_prefix
+        description: "First five digits of the seller's ZIP code."
+
+      - name: seller_city
+        description: "City where the seller is located."
+
+      - name: seller_state
+        description: "State where the seller is located."
