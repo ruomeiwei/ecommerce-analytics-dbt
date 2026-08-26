@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: int_order_fulfillment
+    description: >
+      Intermediate order-level fulfillment model with one row per order.
+      Calculates fulfillment durations, late delivery status, and data quality flags.
+      Orders with invalid timestamp sequences are retained, while the affected
+      duration metric is set to null.
+
+    columns:
+
+      - name: order_id
+        description: Primary key. Unique identifier for each order.
+        tests:
+          - not_null
+          - unique
+
+      - name: order_status
+        description: Current status of the order.
+
+      - name: customer_id
+        description: Unique identifier for the customer.
+
+      - name: purchased_at
+        description: Timestamp when the order was purchased.
+
+      - name: approved_at
+        description: Timestamp when the order was approved.
+
+      - name: delivered_to_carrier_at
+        description: Timestamp when the order was handed over to the carrier.
+
+      - name: delivered_to_customer_at
+        description: Timestamp when the order was delivered to the customer.
+
+      - name: estimated_delivery_at
+        description: Estimated delivery timestamp provided for the order.
+
+      - name: approval_time_hours
+        description: >
+          Time in hours between order purchase and order approval.
+
+      - name: processing_time_hours
+        description: >
+          Time in hours between order approval and handover to the carrier.
+          Set to null when the carrier timestamp occurs before the approval
+          timestamp.
+
+      - name: delivery_time_hours
+        description: >
+          Time in hours between handover to the carrier and delivery to the
+          customer. Set to null when the customer delivery timestamp occurs
+          before the carrier handover timestamp.
+
+      - name: total_fulfillment_time_hours
+        description: >
+          Total time in hours between order purchase and delivery to the
+          customer.
+
+      - name: is_late
+        description: >
+          Indicates whether a delivered order was delivered after the estimated
+          delivery timestamp. 1 means late, 0 means on time, and null means
+          the order was not delivered or does not have an estimated delivery
+          timestamp.
+        tests:
+          - accepted_values: 
+              arguments:
+                values: [0, 1]
+              quote: false
+
+      - name: invalid_processing_time
+        description: >
+          Data quality flag indicating that the order was handed to the carrier
+          before the order was approved. 1 means invalid, 0 means valid.
+        tests:
+          - accepted_values: 
+              arguments:
+                values: [0, 1]
+              quote: false
+
+      - name: invalid_delivery_time
+        description: >
+          Data quality flag indicating that the order was delivered to the
+          customer before it was handed to the carrier. 1 means invalid,
+          0 means valid.
+        tests:
+          - accepted_values: 
+              arguments:
+                values: [0, 1]
+              quote: false

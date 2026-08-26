@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: mart_seller_fulfillment
+    description: >
+      Seller level fulfillment performance metrics. One row per seller.
+      Sellers with fewer than 30 delivered orders are retained in the model
+      but are not included in late rate ranking.
+
+    columns:
+
+      - name: seller_id
+        description: Unique identifier for the seller.
+        tests:
+          - not_null
+          - unique
+
+      - name: orders_received
+        description: >
+          Number of distinct orders associated with the seller.
+
+      - name: delivered_orders
+        description: >
+          Number of distinct orders associated with the seller that were
+          delivered to the customer.
+
+      - name: late_orders
+        description: >
+          Number of delivered orders that were delivered after the estimated
+          delivery timestamp.
+
+      - name: late_rate
+        description: >
+          Percentage of delivered orders that were delivered late.
+          The denominator is delivered orders. Null when the seller has no
+          delivered orders.
+
+      - name: avg_processing_time_hours
+        description: >
+          Average time in hours between order approval and handover to the
+          carrier. Invalid negative processing durations are excluded.
+
+      - name: avg_delivery_time_hours
+        description: >
+          Average time in hours between handover to the carrier and delivery
+          to the customer. Invalid negative delivery durations are excluded.
+
+      - name: is_eligible_for_ranking
+        description: >
+          Indicates whether the seller has at least 30 delivered orders and is
+          therefore eligible for late rate ranking.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+              quote: false
+
+      - name: seller_late_rate_rank
+        description: >
+          Seller ranking based on late rate in descending order among sellers
+          with at least 30 delivered orders. Null for sellers that are not
+          eligible for ranking.
