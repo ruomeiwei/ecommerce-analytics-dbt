@@ -1,0 +1,12 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  first_ci_workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: echo "CI is running"
+      - run: echo "CI passed"
