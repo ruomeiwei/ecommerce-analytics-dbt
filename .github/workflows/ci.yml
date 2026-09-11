@@ -4,9 +4,19 @@ on:
       - main
 
 jobs:
-  first_ci_workflow:
+  dbt-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - run: echo "CI is running"
-      - run: echo "CI passed"
+      - uses: actions/setup-python@v6 
+        with:
+          python-version: "3.11"
+      - run: dbt deps 
+
+      - name: Created GCP credentials file 
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          printf '%s' "$GCP_SERVICE_ACCOUNT_KEY" > "$RUNNER_TEMP/gcp-key.json" 
+      
+      - name: 
