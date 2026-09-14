@@ -1,0 +1,25 @@
+ecommerce_analytics:
+  target: dev
+
+  outputs:
+    dev:
+      type: bigquery
+      project: ecommerce-analytics-506021
+      dataset: ecommerce_dev
+      method: oauth
+      location: US
+      job_retries: 1
+      job_execution_timeout_seconds: 300
+      priority: interactive
+      threads: 4
+    ci:
+      type: bigquery
+      project: "{{ env_var('GCP_PROJECT') }}"
+      dataset: "ecommerce_ci_{{ env_var('GITHUB_PR_NUMBER') }}"
+      method: service-account-json
+      keyfile_json: "{{ env_var('GCP_SERVICE_ACCOUNT_KEY') | as_native }}"
+      location: US
+      job_retries: 1
+      job_execution_timeout_seconds: 300
+      priority: interactive
+      threads: 4
