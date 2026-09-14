@@ -1,0 +1,22 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6 
+        with:
+          python-version: "3.11"
+      - run: pip install dbt-core==1.11.2 dbt-bigquery==1.11.0
+      - run: dbt deps 
+
+      - name: Run dbt build
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          GCP_PROJECT: "ecommerce-analytics-506021"
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: dbt build --target ci
