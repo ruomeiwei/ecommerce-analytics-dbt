@@ -7,5 +7,34 @@ sources:
 
       tables:
         - name: orders 
+          description: "One row per customer order."
+
+          columns:
+            - name: order_id 
+              data_tests:
+                - not_null 
+                - unique
+
+          config:
+            freshness:
+              warn_after:
+                count: 24
+                period: day
+              error_after:
+                count: 48
+                period: day 
+      
+            tags:
+              - ecommerce
+              - raw 
+            meta:
+              owner: analytics 
+              domain: ecommerce
+
         - name: order_items 
         - name: sellers
+        - name: customers
+        - name: geolocation
+        - name: order_payments
+        - name: product_category_name_translation 
+        - name: products 
