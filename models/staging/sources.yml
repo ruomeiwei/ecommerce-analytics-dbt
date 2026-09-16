@@ -5,36 +5,124 @@ sources:
       database: ecommerce-analytics-506021
       schema: ecommerce_raw
 
+      config:
+        freshness:
+          warn_after: {count: 24, period: day}
+          error_after: {count: 48, period: day}
+        tags: [retail, supply_chain]
+
       tables:
         - name: orders 
           description: "One row per customer order."
 
           columns:
             - name: order_id 
+              description: "Unique identifier for each order."
               data_tests:
                 - not_null 
                 - unique
-
-          config:
-            freshness:
-              warn_after:
-                count: 24
-                period: day
-              error_after:
-                count: 48
-                period: day 
-      
-            tags:
-              - ecommerce
-              - raw 
-            meta:
-              owner: analytics 
-              domain: ecommerce
+            - name: customer_id 
+              data_tests:
+                - relationships: 
+                    arguments:
+                      to: source('ecommerce_raw', 'customers')
+                      field: customer_id
+            - name: order_status
+              description: "The current status of the order."
+              data_tests:
+                - accepted_values:
+                    arguments:
+                      values: ['approved', 'canceled', 'created', 'delivered', 'invoiced', 'processing', 'shipped', 'unavailable']
+                    config:
+                      severity: warn #cannot remember the full syntax
+                      store_failures: true
+            - name: order_purchase_timestamp
+              description: "Timestamp when the customer placed the order."
+            - name: order_approved_at
+              description: "Timestamp when the order was approved."
+            - name: order_delivered_carrier_date
+              description: "Timestamp when the order was handed to the carrier."
+            - name: order_delivered_customer_date
+              description: "Timestamp when the order was delivered to the customer."
+            - name: order_estimated_delivery_date
+              description: "Estimated delivery date for the order."
 
         - name: order_items 
+          description: "One row per item within an order."
+          columns: 
+            - name: order_id 
+              description: "Unique identifier of the order."
+              data_tests:
+                - not_null
+            - name: order_item_id 
+              description: "Sequential identifier of an item within an order."
+              data_tests:
+                - not_null
+            - name: product_id 
+              description: "Unique identifier of the product purchased."
+              data_tests:
+                - not_null
+                - relationships:
+                    arguments: 
+                      to: source('ecommerce_raw', 'products')  
+                      field: product_id  
+            - name: seller_id 
+              description: "Unique identifier of the seller fulfilling the item."
+              data_tests:
+                - not_null 
+                - relationships:
+                    arguments:
+                      to: source('ecommerce_raw', 'sellers')
+                      field: seller_id
+            - name: shipping_limit_date
+              description: "Timestamp by which the seller is expected to ship the item."
+            - name: price 
+              description: "Price of the item in Brazilian reais (BRL)."
+              data_tests:
+                - not_null
+            - name: freight_value
+              description: "Freight value allocated to the item in Brazilian reais (BRL)."
+              data_tests:
+                - not_null
         - name: sellers
+          description: "One row per seller, including the seller's location information."
+          columns:
+            - name: seller_id 
+              description: "Unique identifier of the seller."
+              data_tests:
+                - unique 
+                - not_null 
+            - name: seller_zip_code_prefix 
+              description: "First five digits of the seller's ZIP code."
+            - name: seller_city 
+              description: "City where the seller is located."
+            - name: seller_state
+              description: "State where the seller is located."
         - name: customers
+          description: "Customer records associated with orders, including customer identifiers and location information. A customer can have multiple records."
+          columns:
+            - name: customer_id 
+              data_tests: 
+                - unique 
+                - not_null 
+            - name: customer_unique_id 
+              data_tests:
+              - not_null 
+            - name: customer_zip_code_prefix
+            - name: customer_city 
+            - name: customer_state 
         - name: geolocation
+          description: "Geolocation reference data mapping ZIP code prefixes to geographic coordinates and location information."
+          config:
+            freshness: null
         - name: order_payments
+          description: "Payment records associated with customer orders, including payment method, installment count, and payment value."
         - name: product_category_name_translation 
+          description: "Reference data mapping product category names from Portuguese to English."
+          columns: 
+            - name: string_field_0
+              description: "product_category_name"
+            - name: string_field_1
+              description: "product_category_name_english"
         - name: products 
+          description: "One row per product, including product attributes such as category, dimensions, and weight."
