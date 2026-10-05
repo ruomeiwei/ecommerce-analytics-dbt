@@ -3,6 +3,10 @@ version: 2
 seeds:
   - name: product_category_name_translation
     description: "Reference data mapping product category names from Portuguese to English."
+    config:
+      column_types:
+        product_category_name: STRING
+        product_category_name_english: STRING
 
     columns:
       - name: product_category_name
@@ -14,8 +18,17 @@ seeds:
         description: "Product category name translated into English."
         data_tests:
           - not_null
+
   - name: geolocation
     description: "Reference data containing geographic information associated with ZIP code prefixes."
+
+    config:
+      column_types:
+        geolocation_zip_code_prefix: STRING
+        geolocation_lat: FLOAT64
+        geolocation_lng: FLOAT64
+        geolocation_city: STRING 
+        geolocation_state: STRING
 
     columns:
       - name: geolocation_zip_code_prefix
