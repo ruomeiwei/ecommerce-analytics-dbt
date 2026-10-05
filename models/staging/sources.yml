@@ -111,18 +111,7 @@ sources:
             - name: customer_zip_code_prefix
             - name: customer_city 
             - name: customer_state 
-        - name: geolocation
-          description: "Geolocation reference data mapping ZIP code prefixes to geographic coordinates and location information."
-          config:
-            freshness: null
         - name: order_payments
           description: "Payment records associated with customer orders, including payment method, installment count, and payment value."
-        - name: product_category_name_translation 
-          description: "Reference data mapping product category names from Portuguese to English."
-          columns: 
-            - name: string_field_0
-              description: "product_category_name"
-            - name: string_field_1
-              description: "product_category_name_english"
         - name: products 
           description: "One row per product, including product attributes such as category, dimensions, and weight."

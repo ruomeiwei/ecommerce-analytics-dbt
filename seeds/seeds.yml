@@ -1,0 +1,32 @@
+version: 2 
+
+seeds:
+  - name: product_category_name_translation
+    description: "Reference data mapping product category names from Portuguese to English."
+
+    columns:
+      - name: product_category_name
+        description: "Product category name in Portuguese."
+        data_tests:
+          - unique
+          - not_null
+      - name: product_category_name_english
+        description: "Product category name translated into English."
+        data_tests:
+          - not_null
+  - name: geolocation
+    description: "Reference data containing geographic information associated with ZIP code prefixes."
+
+    columns:
+      - name: geolocation_zip_code_prefix
+        description: "First five digits of the ZIP code."
+        data_tests:
+          - not_null
+      - name: geolocation_lat
+        description: "Latitude associated with the ZIP code location."
+      - name: geolocation_lng
+        description: "Longitude associated with the ZIP code location."
+      - name: geolocation_city
+        description: "City associated with the ZIP code location."
+      - name: geolocation_state
+        description: "State associated with the ZIP code location."
